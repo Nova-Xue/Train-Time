@@ -40,11 +40,35 @@ var firebaseConfig = {
         var tr = $("<tr>");
         var tdName = $("<td>").text(snap.val().name);
         var tdDes = $("<td>").text(snap.val().des);
-        var tdTime = $("<td>").text(snap.val().time);
-        var tdFreq = $("<td>").text(snap.val().freq);
-        //var tdMins = 
-        //monet js
-        tr.append(tdName,tdDes,tdTime,tdFreq);
+        var tdTime = $("<td>");
+        var freq = snap.val().freq
+        var tdFreq = $("<td>").text(freq);
+        var time = snap.val().time;//fisrt train time
+        //time like 11:33
+        var date = moment().format("YYYY/MM/DD");//local date
+        var timeFormated = date +" "+time;//time string
+        timeFormated = moment(timeFormated,"YYYY/MM/DD HH:mm");//moment obj
+      
+        
+        
+        if(timeFormated.diff(moment(),"minutes")>0){
+          //time in the future 
+          var tdMin = $("<td>").text(timeFormated.diff(moment(),"minutes"));
+          console.log("future");
+          tdTime.text(snap.val().time);
+        }else{
+          //time passed 
+          console.log(freq);
+          //passedTime < 0 
+          var passedTime = timeFormated.diff(moment(),"minutes");
+          console.log(passedTime);
+          var minutes = freq-(Math.abs(passedTime) % freq);
+          var tdMin = $("<td>").text(minutes);
+          var next = moment().add(minutes,"minutes").format("HH:mm");
+          tdTime.text(next);
+        }
+        
+        tr.append(tdName,tdDes,tdTime,tdFreq,tdMin);
         $("#body").append(tr);
     }
     
